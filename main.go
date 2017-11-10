@@ -3,5 +3,9 @@ package main
 import "fmt"
 
 func main() {
-	fmt.Println(getVersion())
+	LogInit(false)
+	err := runCmd()
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 }
