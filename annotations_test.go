@@ -21,7 +21,8 @@ func TestSetAnnotation(t *testing.T) {
 			ProviderID: "node0",
 		},
 	}
-	a := newAnnotations("* 2 * * *", "* 5 * * *")
+	a, err := newAnnotations("* 2 * * *", "* 5 * * *")
+	assert.Nil(t, err)
 	node.Annotations[nodeAnnotationFromWindow] = fmt.Sprintf("%v", a.timeWindow.from)
 	node.Annotations[nodeAnnotationToWindow] = fmt.Sprintf("%v", a.timeWindow.to)
 	node.Annotations[nodeAnnotationReboot] = fmt.Sprintf("%v", a.reboot)

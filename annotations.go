@@ -8,16 +8,19 @@ const (
 	nodeAnnotationToWindow   = "k8s.node.terminator.toTimeWindow"
 )
 
-func newAnnotations(fromCronTime, toCronTime string) *Annotations {
+func newAnnotations(fromCronTime, toCronTime string) (*Annotations, error) {
 	a := Annotations{
 		reboot:     "false",
 		timeWindow: nil,
 	}
 	if fromCronTime != "" && toCronTime != "" {
-		m := newMaintenanceWindow(fromCronTime, toCronTime)
+		m, err := newMaintenanceWindow(fromCronTime, toCronTime)
+		if err != nil {
+			return nil, fmt.Errorf("failed to create new annotation: %v", err.Error())
+		}
 		a.timeWindow = m
 	}
-	return &a
+	return &a, nil
 }
 
 // Annotations all annotaitons to add to node

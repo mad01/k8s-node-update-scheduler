@@ -1,14 +1,21 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gorhill/cronexpr"
 )
 
-func newMaintenanceWindow(from, to string) *MaintenanceWindow {
-	exprStart := cronexpr.MustParse(from)
-	exprStop := cronexpr.MustParse(to)
+func newMaintenanceWindow(from, to string) (*MaintenanceWindow, error) {
+	exprStart, err := cronexpr.Parse(from)
+	if err != nil {
+		return nil, fmt.Errorf("failed to Parse cronexpr %v", err.Error())
+	}
+	exprStop, err := cronexpr.Parse(to)
+	if err != nil {
+		return nil, fmt.Errorf("failed to Parse cronexpr %v", err.Error())
+	}
 
 	windowStartTime := exprStart.Next(time.Now())
 	windowStopTime := exprStop.Next(time.Now())
@@ -17,7 +24,7 @@ func newMaintenanceWindow(from, to string) *MaintenanceWindow {
 		from: &windowStartTime,
 		to:   &windowStopTime,
 	}
-	return &m
+	return &m, nil
 
 }
 

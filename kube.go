@@ -40,9 +40,13 @@ func newKube(kubeconfig, fromCronTime, toCronTime string) (*Kube, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to get client: %v", err.Error())
 	}
+	a, err := newAnnotations(fromCronTime, toCronTime)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create new kube: %v", err.Error())
+	}
 	k := Kube{
 		client:      client,
-		annotations: newAnnotations(fromCronTime, toCronTime),
+		annotations: a,
 	}
 	return &k, nil
 }
