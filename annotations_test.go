@@ -1,35 +1,67 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func TestSetAnnotation(t *testing.T) {
-	node := &v1.Node{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "node0",
-			Annotations: map[string]string{
-				"dummy": "",
-			},
+	testCases := []struct {
+		testName    string
+		fromCron    string
+		toCron      string
+		expectedErr bool
+	}{
+		{
+			testName:    "from to not set",
+			fromCron:    "",
+			toCron:      "",
+			expectedErr: false,
 		},
-		Spec: v1.NodeSpec{
-			ProviderID: "node0",
+
+		{
+			testName:    "from/to with incorrect cron string",
+			fromCron:    "foobar",
+			toCron:      "foobar",
+			expectedErr: true,
 		},
-	}
-	a, err := newAnnotations("* 2 * * *", "* 5 * * *")
-	assert.Nil(t, err)
-	node.Annotations[nodeAnnotationFromWindow] = fmt.Sprintf("%v", a.timeWindow.from)
-	node.Annotations[nodeAnnotationToWindow] = fmt.Sprintf("%v", a.timeWindow.to)
-	node.Annotations[nodeAnnotationReboot] = fmt.Sprintf("%v", a.reboot)
-	if _, ok := node.Annotations["dummy"]; ok {
-		assert.True(t, ok)
-	} else {
-		assert.True(t, false)
+
+		{
+			testName:    "to with incorrect cron string",
+			fromCron:    "",
+			toCron:      "foobar",
+			expectedErr: false,
+		},
+
+		{
+			testName:    "from with incorrect cron string",
+			fromCron:    "foobar",
+			toCron:      "",
+			expectedErr: false,
+		},
+
+		{
+			testName:    "from set to not",
+			fromCron:    "* * * * *",
+			toCron:      "",
+			expectedErr: false,
+		},
+
+		{
+			testName:    "from and to set",
+			fromCron:    "* 5 * * *",
+			toCron:      "* 2 * * *",
+			expectedErr: false,
+		},
 	}
 
+	for _, tc := range testCases {
+		_, err := newAnnotations(tc.fromCron, tc.toCron)
+		if tc.expectedErr {
+			assert.NotNil(t, err, tc.testName)
+		} else {
+			assert.Nil(t, err, tc.testName)
+		}
+	}
 }
