@@ -68,12 +68,12 @@ func (k *Kube) annotateNodes(nodeList *v1.NodeList) error {
 }
 
 func (k *Kube) annotatePatchNode(node *v1.Node) error {
-	node = node.DeepCopy()
 	oldData, err := json.Marshal(node)
 	if err != nil {
 		return fmt.Errorf("failed to Marshal old node %v", err.Error())
 	}
 
+	node = node.DeepCopy()
 	node.Annotations[nodeAnnotationFromWindow] = fmt.Sprintf("%v", k.annotations.timeWindow.from)
 	node.Annotations[nodeAnnotationToWindow] = fmt.Sprintf("%v", k.annotations.timeWindow.to)
 	node.Annotations[nodeAnnotationReboot] = fmt.Sprintf("%v", k.annotations.reboot)
