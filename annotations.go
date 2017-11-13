@@ -19,7 +19,10 @@ func newAnnotations(fromCronTime, toCronTime string) (*Annotations, error) {
 			return nil, fmt.Errorf("failed to create new annotation: %v", err.Error())
 		}
 		a.timeWindow = m
+	} else {
+		a.timeWindow = &MaintenanceWindow{}
 	}
+
 	return &a, nil
 }
 
