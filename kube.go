@@ -68,6 +68,11 @@ func (k *Kube) getNodes(selector string) (*v1.NodeList, error) {
 
 // TODO: implement to take maintain window from to see issue on terminator
 func (k *Kube) annotateNodes(nodeList *v1.NodeList) error {
+	fmt.Printf("adding annotations %v=\"%v\" %v=\"%v\" %v=\"%v\"\n",
+		nodeAnnotationReboot, k.annotations.reboot,
+		nodeAnnotationFromWindow, k.annotations.timeWindow.fromCron,
+		nodeAnnotationToWindow, k.annotations.timeWindow.toCron,
+	)
 	for _, node := range nodeList.Items {
 		err := k.annotatePatchNode(&node)
 		if err != nil {
@@ -105,5 +110,6 @@ func (k *Kube) annotatePatchNode(node *v1.Node) error {
 		return fmt.Errorf("failed to patch node %v %v", node.GetName(), err.Error())
 	}
 
+	fmt.Printf("annotated node %v\n", node.GetName())
 	return nil
 }
