@@ -67,8 +67,13 @@ func (k *Kube) getNodes(selector string) (*v1.NodeList, error) {
 }
 
 // TODO: implement to take maintain window from to see issue on terminator
-// TODO: implement with patch do add annotations
 func (k *Kube) annotateNodes(nodeList *v1.NodeList) error {
+	for _, node := range nodeList.Items {
+		err := k.annotatePatchNode(&node)
+		if err != nil {
+			return fmt.Errorf("failed to annotation node %v %v", node.GetName(), err.Error())
+		}
+	}
 	return nil
 }
 
