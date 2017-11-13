@@ -7,12 +7,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func cmdAnnotateNodes() *cobra.Command {
+func cmdScheduleNodes() *cobra.Command {
 	var kubeconfig, selector, fromWindow, toWindow string
-
 	var command = &cobra.Command{
-		Use:   "annotate",
-		Short: "annotate nodes for update",
+		Use:   "schedule",
+		Short: "schedule nodes for update",
 		Long:  "",
 		Run: func(cmd *cobra.Command, args []string) {
 			client, err := newKube(kubeconfig, fromWindow, toWindow)
@@ -58,7 +57,7 @@ func cmdVersion() *cobra.Command {
 func runCmd() error {
 	var rootCmd = &cobra.Command{Use: "k8s-node-update-scheduler"}
 	rootCmd.AddCommand(cmdVersion())
-	rootCmd.AddCommand(cmdAnnotateNodes())
+	rootCmd.AddCommand(cmdScheduleNodes())
 
 	err := rootCmd.Execute()
 	if err != nil {
