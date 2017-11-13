@@ -1,6 +1,7 @@
 # k8s-node-update-scheduler
 
-a cli tool to schedule update/terminations of nodes in a kubernetes cluster designed to work together with [node-terminator](https://github.com/mad01/k8s-node-terminator) that looks for the annotations added my this cli tool.
+a cli tool to schedule update/terminations of nodes in a kubernetes cluster designed to work together with [node-terminator](https://github.com/mad01/k8s-node-terminator) that looks for annotations. This tool implements adding those annotations. The result is that you can tag N instances for update/termination
+
 
 ## example
 
