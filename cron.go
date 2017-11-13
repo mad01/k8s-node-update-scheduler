@@ -21,8 +21,10 @@ func newMaintenanceWindow(from, to string) (*MaintenanceWindow, error) {
 	windowStopTime := exprStop.Next(time.Now())
 
 	m := MaintenanceWindow{
-		from: &windowStartTime,
-		to:   &windowStopTime,
+		fromCron: from,
+		toCron:   to,
+		from:     &windowStartTime,
+		to:       &windowStopTime,
 	}
 	return &m, nil
 
@@ -30,6 +32,8 @@ func newMaintenanceWindow(from, to string) (*MaintenanceWindow, error) {
 
 // MaintenanceWindow info
 type MaintenanceWindow struct {
-	from *time.Time
-	to   *time.Time
+	fromCron string
+	toCron   string
+	from     *time.Time
+	to       *time.Time
 }
