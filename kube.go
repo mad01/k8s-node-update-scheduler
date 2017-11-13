@@ -9,6 +9,7 @@ import (
 	"fmt"
 
 	"k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/strategicpatch"
@@ -57,8 +58,12 @@ type Kube struct {
 	annotations *Annotations
 }
 
-func (k *Kube) getNodes() (*v1.NodeList, error) {
-	return nil, nil
+func (k *Kube) getNodes(selector string) (*v1.NodeList, error) {
+	nodes, err := k.client.Core().Nodes().List(metav1.ListOptions{LabelSelector: selector})
+	if err != nil {
+		return nil, fmt.Errorf("failed to get nodes list %v", err.Error())
+	}
+	return nodes, nil
 }
 
 // TODO: implement to take maintain window from to see issue on terminator
