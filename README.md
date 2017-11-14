@@ -6,7 +6,7 @@ the time window flags support `hh:mm AM/PM` as time format
 
 ## example
 
-will annotate all nodes in the cluster will skip masters since selector won't match with a time window between 2 and 5 in the morning
+the cli will annotate all nodes in the cluster will skip masters since selector won't match. The annotations will set the set terminations to be allowed between 2-5 in the morning and the reboot flag till be set to true
 ```
 k8s-node-update-scheduler schedule \
     --selector kubernetes.io/role=node \
