@@ -8,5 +8,10 @@ the time window flags support `hh:mm AM/PM` as time format
 
 will annotate all nodes in the cluster will skip masters since selector won't match with a time window between 2 and 5 in the morning
 ```
-k8s-node-update-scheduler schedule --selector kubernetes.io/role=node --kube.config ~/.kube/config  --schedule.fromWindow="02:01 AM" --schedule.toWindow="05:01 AM" --reboot
+k8s-node-update-scheduler schedule \
+    --selector kubernetes.io/role=node \
+    --kube.config ~/.kube/config  \
+    --schedule.fromWindow="02:01 AM" \
+    --schedule.toWindow="05:01 AM" \
+    --reboot
 ```
