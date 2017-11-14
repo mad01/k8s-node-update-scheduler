@@ -38,12 +38,13 @@ func k8sGetClient(kubeconfig string) (*kubernetes.Clientset, error) {
 	return client, nil
 }
 
-func newKube(kubeconfig, fromTime, toTime string) (*Kube, error) {
+func newKube(kubeconfig, fromTime, toTime string, reboot bool) (*Kube, error) {
 	client, err := k8sGetClient(kubeconfig)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get client: %v", err.Error())
 	}
 	a, err := newAnnotations(fromTime, toTime)
+	a.reboot = fmt.Sprintf("%v", reboot)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create new kube: %v", err.Error())
 	}

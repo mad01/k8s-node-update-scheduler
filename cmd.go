@@ -9,12 +9,13 @@ import (
 
 func cmdScheduleNodes() *cobra.Command {
 	var kubeconfig, selector, fromWindow, toWindow string
+	var reboot bool
 	var command = &cobra.Command{
 		Use:   "schedule",
 		Short: "schedule nodes for update",
 		Long:  "",
 		Run: func(cmd *cobra.Command, args []string) {
-			client, err := newKube(kubeconfig, fromWindow, toWindow)
+			client, err := newKube(kubeconfig, fromWindow, toWindow, reboot)
 			if err != nil {
 				fmt.Println(err.Error())
 				os.Exit(1)
@@ -36,6 +37,7 @@ func cmdScheduleNodes() *cobra.Command {
 	command.Flags().StringVar(&selector, "selector", "", "lable selector")
 	command.Flags().StringVar(&fromWindow, "schedule.fromWindow", "", "schedule from \"hh:mm AM/PM\" time format to start updates")
 	command.Flags().StringVar(&toWindow, "schedule.toWindow", "", "schedule to \"hh:mm AM/PM\" time format to stop updates")
+	command.Flags().BoolVar(&reboot, "reboot", false, "set reboot flag to true")
 
 	return command
 }
