@@ -13,6 +13,8 @@ import (
 
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/strategicpatch"
+
+	"github.com/mad01/k8s-node-terminator/pkg/annotations"
 )
 
 func k8sGetClientConfig(kubeconfig string) (*rest.Config, error) {
@@ -36,12 +38,12 @@ func k8sGetClient(kubeconfig string) (*kubernetes.Clientset, error) {
 	return client, nil
 }
 
-func newKube(kubeconfig, fromCronTime, toCronTime string) (*Kube, error) {
+func newKube(kubeconfig, fromTime, toTime string) (*Kube, error) {
 	client, err := k8sGetClient(kubeconfig)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get client: %v", err.Error())
 	}
-	a, err := newAnnotations(fromCronTime, toCronTime)
+	a, err := newAnnotations(fromTime, toTime)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create new kube: %v", err.Error())
 	}
@@ -66,12 +68,11 @@ func (k *Kube) getNodes(selector string) (*v1.NodeList, error) {
 	return nodes, nil
 }
 
-// TODO: implement to take maintain window from to see issue on terminator
 func (k *Kube) annotateNodes(nodeList *v1.NodeList) error {
 	fmt.Printf("adding annotations %v=\"%v\" %v=\"%v\" %v=\"%v\"\n",
-		nodeAnnotationReboot, k.annotations.reboot,
-		nodeAnnotationFromWindow, k.annotations.timeWindow.fromCron,
-		nodeAnnotationToWindow, k.annotations.timeWindow.toCron,
+		annotations.NodeAnnotationReboot, k.annotations.reboot,
+		annotations.NodeAnnotationFromWindow, k.annotations.timeWindow.FromString(),
+		annotations.NodeAnnotationToWindow, k.annotations.timeWindow.ToString(),
 	)
 	for _, node := range nodeList.Items {
 		err := k.annotatePatchNode(&node)
@@ -89,11 +90,11 @@ func (k *Kube) annotatePatchNode(node *v1.Node) error {
 	}
 
 	nodeCopy := node.DeepCopy()
-	annotations := nodeCopy.GetAnnotations()
-	annotations[nodeAnnotationFromWindow] = k.annotations.timeWindow.fromCron
-	annotations[nodeAnnotationToWindow] = k.annotations.timeWindow.toCron
-	annotations[nodeAnnotationReboot] = k.annotations.reboot
-	nodeCopy.SetAnnotations(annotations)
+	a := nodeCopy.GetAnnotations()
+	a[annotations.NodeAnnotationFromWindow] = k.annotations.timeWindow.FromString()
+	a[annotations.NodeAnnotationToWindow] = k.annotations.timeWindow.ToString()
+	a[annotations.NodeAnnotationReboot] = k.annotations.reboot
+	nodeCopy.SetAnnotations(a)
 
 	newData, err := json.Marshal(nodeCopy)
 	if err != nil {

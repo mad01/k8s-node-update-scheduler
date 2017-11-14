@@ -34,10 +34,8 @@ func cmdScheduleNodes() *cobra.Command {
 
 	command.Flags().StringVar(&kubeconfig, "kube.config", "", "path to kube config")
 	command.Flags().StringVar(&selector, "selector", "", "lable selector")
-	command.Flags().StringVar(&fromWindow, "schedule.fromWindow", "", "schedule from cron time format to start updates")
-	command.Flags().StringVar(&toWindow, "schedule.toWindow", "", "schedule to cron time format to stop updates")
-
-	//command.MarkFlagRequired("kube.config")
+	command.Flags().StringVar(&fromWindow, "schedule.fromWindow", "", "schedule from \"hh:mm AM/PM\" time format to start updates")
+	command.Flags().StringVar(&toWindow, "schedule.toWindow", "", "schedule to \"hh:mm AM/PM\" time format to stop updates")
 
 	return command
 }
