@@ -1,0 +1,6 @@
+k8s-node-terminator
+secret.yaml
+_bin
+_release
+.version
+.vagrant
