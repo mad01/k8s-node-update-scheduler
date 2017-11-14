@@ -2,6 +2,11 @@
 
 
 [[projects]]
+  name = "github.com/mad01/k8s-node-terminator"
+  packages = ["pkg/window", "pkg/annotations"]
+  revision = "21af7a36ada7cf6cde726735e9040b9d0795efe0"
+
+[[projects]]
   name = "github.com/PuerkitoBio/purell"
   packages = ["."]
   revision = "0bcb03f4b4d0a9428594752bd2a3b9aa0a9d4bd4"
