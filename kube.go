@@ -1,22 +1,19 @@
 package main
 
 import (
-	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd"
-
 	"encoding/json"
 	"fmt"
 	"strings"
 
-	"github.com/blang/semver"
-
 	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/strategicpatch"
+	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
 
+	"github.com/blang/semver"
 	"github.com/mad01/k8s-node-terminator/pkg/annotations"
 )
 
