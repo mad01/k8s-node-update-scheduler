@@ -37,7 +37,7 @@ func cmdScheduleNodes() *cobra.Command {
 	command.Flags().StringVar(&selector, "selector", "", "lable selector")
 	command.Flags().StringVar(&fromWindow, "schedule.fromWindow", "", "schedule from \"hh:mm AM/PM\" time format to start updates")
 	command.Flags().StringVar(&toWindow, "schedule.toWindow", "", "schedule to \"hh:mm AM/PM\" time format to stop updates")
-	command.Flags().BoolVar(&reboot, "reboot", false, "set reboot flag to true")
+	command.Flags().BoolVar(&reboot, "terminate", false, "flag for termination to true")
 
 	return command
 }
