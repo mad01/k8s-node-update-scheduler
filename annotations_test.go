@@ -8,57 +8,63 @@ import (
 
 func TestSetAnnotation(t *testing.T) {
 	testCases := []struct {
-		testName    string
-		fromCron    string
-		toCron      string
-		expectedErr bool
+		testName      string
+		input         string
+		expectedError bool
 	}{
+
 		{
-			testName:    "from to not set",
-			fromCron:    "",
-			toCron:      "",
-			expectedErr: false,
+			testName:      "time :01",
+			input:         "01:01",
+			expectedError: true,
 		},
 
 		{
-			testName:    "from/to with incorrect cron string",
-			fromCron:    "foobar",
-			toCron:      "foobar",
-			expectedErr: true,
+			testName:      "time 01:",
+			input:         "01:",
+			expectedError: true,
 		},
 
 		{
-			testName:    "to with incorrect cron string",
-			fromCron:    "",
-			toCron:      "foobar",
-			expectedErr: false,
+			testName:      "time 01:01 AM",
+			input:         "01:01 AM",
+			expectedError: false,
 		},
 
 		{
-			testName:    "from with incorrect cron string",
-			fromCron:    "foobar",
-			toCron:      "",
-			expectedErr: false,
+			testName:      "time 01:01 am",
+			input:         "01:01 am",
+			expectedError: true,
 		},
 
 		{
-			testName:    "from set to not",
-			fromCron:    "* * * * *",
-			toCron:      "",
-			expectedErr: false,
+			testName:      "time 01:01 PM",
+			input:         "01:01 PM",
+			expectedError: false,
 		},
 
 		{
-			testName:    "from and to set",
-			fromCron:    "* 5 * * *",
-			toCron:      "* 2 * * *",
-			expectedErr: false,
+			testName:      "time 1:01",
+			input:         "1:01",
+			expectedError: true,
+		},
+
+		{
+			testName:      "time 1:01 AM",
+			input:         "1:01 AM",
+			expectedError: false,
+		},
+
+		{
+			testName:      "time 1:01 PM",
+			input:         "1:01 PM",
+			expectedError: false,
 		},
 	}
 
 	for _, tc := range testCases {
-		_, err := newAnnotations(tc.fromCron, tc.toCron)
-		if tc.expectedErr {
+		_, err := newAnnotations(tc.input, tc.input)
+		if tc.expectedError == true {
 			assert.NotNil(t, err, tc.testName)
 		} else {
 			assert.Nil(t, err, tc.testName)
