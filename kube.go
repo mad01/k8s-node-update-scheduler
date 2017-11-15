@@ -7,6 +7,9 @@ import (
 
 	"encoding/json"
 	"fmt"
+	"strings"
+
+	"github.com/blang/semver"
 
 	"k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -67,6 +70,53 @@ func (k *Kube) getNodes(selector string) (*v1.NodeList, error) {
 		return nil, fmt.Errorf("failed to get nodes list %v", err.Error())
 	}
 	return nodes, nil
+}
+
+func (k *Kube) getKubeletVersion(node *v1.Node) (*semver.Version, error) {
+	rawString := node.Status.NodeInfo.KubeletVersion
+	versionString := strings.Replace(rawString, "v", "", -1)
+
+	version, err := semver.Parse(versionString)
+	if err != nil {
+		return nil, fmt.Errorf("failed to parse version %v", err.Error())
+	}
+	return &version, nil
+}
+
+func (k *Kube) getNodesNotMatchingMasterVersion(selector string) (*v1.NodeList, error) {
+	masters, err := k.getNodes("kubernetes.io/role=master")
+	if err != nil {
+		return nil, fmt.Errorf("failed to get master nodes %v", err.Error())
+	}
+	var masterVersion *semver.Version
+	if len(masters.Items) >= 1 {
+		masterNode := masters.Items[0]
+		version, err := k.getKubeletVersion(&masterNode)
+		masterVersion = version
+		if err != nil {
+			return nil, fmt.Errorf("failed to get kubelet version %v", err.Error())
+		}
+	} else {
+		return nil, fmt.Errorf("no masters found")
+	}
+
+	nodeList, err := k.getNodes(selector)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get nodes %v", err.Error())
+	}
+
+	var filteredList v1.NodeList
+	for _, node := range nodeList.Items {
+		nodeVersion, err := k.getKubeletVersion(&node)
+		if err != nil {
+			return nil, fmt.Errorf("failed to get kubelet version %v", err.Error())
+		}
+		// check if nodeversion < masterversion
+		if nodeVersion.LT(*masterVersion) {
+			filteredList.Items = append(filteredList.Items, node)
+		}
+	}
+	return &filteredList, nil
 }
 
 func (k *Kube) annotateNodes(nodeList *v1.NodeList) error {

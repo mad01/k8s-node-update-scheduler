@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"os"
 
+	"k8s.io/api/core/v1"
+
 	"github.com/spf13/cobra"
 )
 
 func cmdScheduleNodes() *cobra.Command {
 	var kubeconfig, selector, fromWindow, toWindow string
-	var reboot bool
+	var reboot, outofdateNodes bool
 	var command = &cobra.Command{
 		Use:   "schedule",
 		Short: "schedule nodes for update",
@@ -20,12 +22,23 @@ func cmdScheduleNodes() *cobra.Command {
 				fmt.Println(err.Error())
 				os.Exit(1)
 			}
-			nodes, err := client.getNodes(selector)
-			if err != nil {
-				fmt.Println(err.Error())
-				os.Exit(1)
+			var nodeslist *v1.NodeList
+			if outofdateNodes == true {
+				nodes, err := client.getNodesNotMatchingMasterVersion(selector)
+				nodeslist = nodes
+				if err != nil {
+					fmt.Println(err.Error())
+					os.Exit(1)
+				}
+			} else {
+				nodes, err := client.getNodes(selector)
+				nodeslist = nodes
+				if err != nil {
+					fmt.Println(err.Error())
+					os.Exit(1)
+				}
 			}
-			err = client.annotateNodes(nodes)
+			err = client.annotateNodes(nodeslist)
 			if err != nil {
 				fmt.Println(err.Error())
 				os.Exit(1)
@@ -38,6 +51,7 @@ func cmdScheduleNodes() *cobra.Command {
 	command.Flags().StringVar(&fromWindow, "schedule.fromWindow", "", "schedule from \"hh:mm AM/PM\" time format to start updates")
 	command.Flags().StringVar(&toWindow, "schedule.toWindow", "", "schedule to \"hh:mm AM/PM\" time format to stop updates")
 	command.Flags().BoolVar(&reboot, "terminate", false, "flag for termination to true")
+	command.Flags().BoolVar(&outofdateNodes, "out.of.date.nodes", false, "if set all nodes with a older kubelet version then the master will be terminated")
 
 	return command
 }
