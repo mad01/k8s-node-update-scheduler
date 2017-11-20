@@ -69,7 +69,7 @@ func cmdVersion() *cobra.Command {
 }
 
 func runCmd() error {
-	var rootCmd = &cobra.Command{Use: "k8s-node-update-scheduler"}
+	var rootCmd = &cobra.Command{Use: "termination-scheduler"}
 	rootCmd.AddCommand(cmdVersion())
 	rootCmd.AddCommand(cmdScheduleNodes())
 

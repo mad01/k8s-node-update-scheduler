@@ -2,9 +2,9 @@
 
 
 [[projects]]
-  name = "github.com/mad01/k8s-node-terminator"
+  name = "github.com/mad01/node-terminator"
   packages = ["pkg/window", "pkg/annotations"]
-  revision = "21af7a36ada7cf6cde726735e9040b9d0795efe0"
+  revision = "893bd926fee726d2696d5d17cf69aec3457a3773"
 
 [[projects]]
   name = "github.com/blang/semver"

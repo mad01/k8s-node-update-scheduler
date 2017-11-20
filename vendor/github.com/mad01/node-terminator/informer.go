@@ -13,8 +13,8 @@ import (
 	lister_v1 "k8s.io/client-go/listers/core/v1"
 	"k8s.io/client-go/tools/cache"
 
-	"github.com/mad01/k8s-node-terminator/pkg/annotations"
-	"github.com/mad01/k8s-node-terminator/pkg/window"
+	"github.com/mad01/node-terminator/pkg/annotations"
+	"github.com/mad01/node-terminator/pkg/window"
 )
 
 type nodeControllerInput struct {
@@ -68,14 +68,21 @@ func newNodeController(input *nodeControllerInput) *nodeController {
 					if c.terminator.activeTerminations.Size() <= input.concurrentTerminations {
 						if !c.terminator.activeTerminations.Has(node.GetName()) {
 							if annotations.CheckAnnotationsExists(node) == nil && !checkIfMaster(node) {
-								maintainWindow, err := window.GetMaintenanceWindowFromAnnotations(node)
-								if err != nil {
+								maintainWindow, _ := window.GetMaintenanceWindowFromAnnotations(node)
+								if maintainWindow != nil {
 									if maintainWindow.InMaintenanceWindow() == true {
+										log.Infof("in maintainWindow starting with node %v window %v - %v :: current time %v",
+											node.GetName(),
+											maintainWindow.From(),
+											maintainWindow.To(),
+											time.Now(),
+										)
 										event := newTerminatorEvent(node.GetName())
 										event.waitInterval = input.waitInterval
 										c.terminator.events <- *event
 									}
-								} else {
+								} else if maintainWindow == nil {
+									log.Infof("maintainWindow not set starting termination of node %v", node.GetName())
 									event := newTerminatorEvent(node.GetName())
 									event.waitInterval = input.waitInterval
 									c.terminator.events <- *event

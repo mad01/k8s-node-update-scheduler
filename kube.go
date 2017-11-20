@@ -14,7 +14,7 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 
 	"github.com/blang/semver"
-	"github.com/mad01/k8s-node-terminator/pkg/annotations"
+	"github.com/mad01/node-terminator/pkg/annotations"
 )
 
 func k8sGetClientConfig(kubeconfig string) (*rest.Config, error) {

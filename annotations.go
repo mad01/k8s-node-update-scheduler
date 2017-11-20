@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 
-	"github.com/mad01/k8s-node-terminator/pkg/annotations"
-	"github.com/mad01/k8s-node-terminator/pkg/window"
+	"github.com/mad01/node-terminator/pkg/annotations"
+	"github.com/mad01/node-terminator/pkg/window"
 )
 
 func newAnnotations(fromTime, toTime string) (*Annotations, error) {

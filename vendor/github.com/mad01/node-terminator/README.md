@@ -1,5 +1,5 @@
-# k8s-node-terminator
-[![Docker Repository on Quay](https://quay.io/repository/mad01/k8s-node-terminator/status "Docker Repository on Quay")](https://quay.io/repository/mad01/k8s-node-terminator)
+# node-terminator
+[![Docker Repository on Quay](https://quay.io/repository/mad01/node-terminator/status "Docker Repository on Quay")](https://quay.io/repository/mad01/node-terminator)
 
 a service to manage the upgrade lifecyckle of k8s nodes (supports aws)
 
@@ -29,12 +29,17 @@ it's outside of the scope of this service to set the annotations on the nodes. T
 
 ## annotation
 `k8s.node.terminator.reboot` set to `true` as string in the nodes annotations
+`k8s.node.terminator.fromTimeWindow` `k8s.node.terminator.toTimeWindow` if both from/to is set terminations will be done in that window in format `hh:mm AM/PM` . the termination window will mean that termination will be allowed every day in the window. The time is take with `time.Now()` and should base the timezone on local time. if the window not set or missing reboots will be done anytime
+
 ```yaml
 apiVersion: v1
 kind: Node
 metadata:
   annotations:
     k8s.node.terminator.reboot: "true"
+    k8s.node.terminator.fromTimeWindow: "02:01 AM"
+    k8s.node.terminator.toTimeWindow: "05:01 AM"
+
 ```
 
 ## testing 

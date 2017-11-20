@@ -1,4 +1,4 @@
-REPO=k8s-node-update-scheduler
+REPO=termination-scheduler
 GITHUB_USER=mad01
 ORG_PATH=github.com/$(GITHUB_USER)
 REPO_PATH=$(ORG_PATH)/$(REPO)
